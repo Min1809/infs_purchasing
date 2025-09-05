@@ -1,0 +1,130 @@
+<odoo>
+    <record id="email_template_rfqlevel_1_approval" model="mail.template">
+        <field name="name">Level 1 RFQ Approval Notification</field>
+        <field name="model_id" ref="purchase.model_purchase_order" />
+        <field name="subject">RFQ {{ object.name }}: Awaiting L1 Approval </field>
+        <field name="body_html"><![CDATA[
+            <div style="margin: 0px; padding: 0px;">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Hello,<br><br>
+                    The following RFQ is waiting for your approval. Please login to ERP and check.<br><br>
+                    <br>
+                    RFQ Number : <t t-if="object.name">
+                        <t t-out="object.name or ''"> RFQ Number </t>
+                    </t>
+                    <br>
+                    Current Stage : <t t-if="object.approval_status">
+                        <t t-out="object.approval_status or ''"> Approval Status </t>
+                    </t>
+                    <br>
+                    Purchase Person : <t t-if="object.user_id.name">
+                        <t t-out="object.user_id.name or ''"> Someone </t>
+                    </t>
+                    <br>
+                    Link : <a t-if="object.get_rfq_url(object.company_id)" t-att-href="object.get_rfq_url(object.company_id)">Link</a> 
+                    <br>
+                     
+                    <br><br>
+                    * This email is automatically sent from the erp.infinityitsuccess.com *
+                    <br>                      
+                </p>
+            </div>                        
+        ]]></field>
+    </record>
+
+    <record id="email_template_rfqlevel_2_approval" model="mail.template">
+        <field name="name">Level 2 RFQ Approval Notification</field>
+        <field name="model_id" ref="purchase.model_purchase_order" />
+        <field name="subject">RFQ {{ object.name }}: Awaiting L2 Approval </field>
+        <field name="body_html"><![CDATA[
+            <div style="margin: 0px; padding: 0px;">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Hello,<br><br>
+                    The following RFQ is waiting for your approval. Please login to ERP and check.<br><br>
+                    <br>
+                    RFQ Number : <t t-if="object.name">
+                        <t t-out="object.name or ''"> RFQ Number </t>
+                    </t>
+                    <br>
+                    Current Stage : <t t-if="object.approval_status">
+                        <t t-out="object.approval_status or ''"> Approval Status </t>
+                    </t>
+                    <br>
+                    Purchase Person : <t t-if="object.user_id.name">
+                        <t t-out="object.user_id.name or ''"> Someone </t>
+                    </t>
+                    <br>
+                    Link : <a t-if="object.get_rfq_url(object.company_id)" t-att-href="object.get_rfq_url(object.company_id)">Link</a>
+                    <br>
+
+                    <br><br>
+                    * This email is automatically sent from the erp.infinityitsuccess.com *
+                    <br>
+                </p>
+            </div>
+        ]]></field>
+    </record>
+
+    <record id="email_template_rfqlevel_3_approval" model="mail.template">
+        <field name="name">Level 3 RFQ Approval Notification</field>
+        <field name="model_id" ref="purchase.model_purchase_order" />
+        <field name="subject">RFQ {{ object.name }}: Awaiting L3 Approval </field>
+        <field name="body_html"><![CDATA[
+            <div style="margin: 0px; padding: 0px;">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Hello,<br><br>
+                    The following RFQ is waiting for your approval. Please login to ERP and check.<br><br>
+                    <br>
+                    RFQ Number : <t t-if="object.name">
+                        <t t-out="object.name or ''"> RFQ Number </t>
+                    </t>
+                    <br>
+                    Current Stage : <t t-if="object.approval_status">
+                        <t t-out="object.approval_status or ''"> Approval Status </t>
+                    </t>
+                    <br>
+                    Purchase Person : <t t-if="object.user_id.name">
+                        <t t-out="object.user_id.name or ''"> Someone </t>
+                    </t>
+                    <br>
+                    Link : <a t-if="object.get_rfq_url(object.company_id)" t-att-href="object.get_rfq_url(object.company_id)">Link</a> 
+                    <br>
+                     
+                    <br><br>
+                    * This email is automatically sent from the erp.infinityitsuccess.com *
+                    <br>                      
+                </p>
+            </div>                        
+        ]]></field>
+    </record>
+    
+    <record id="email_template_rfq_approved" model="mail.template">
+        <field name="name">Your RFQ has been approved by all supervisors.</field>
+        <field name="model_id" ref="purchase.model_purchase_order" />
+        <field name="subject">RFQ {{ object.name }}: is approved. </field>
+        <field name="body_html"><![CDATA[
+            <div style="margin: 0px; padding: 0px;">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Hello,<br><br>
+                    The following RFQ has been approved by all supervisors. Please login to ERP and check.<br><br>
+                    <br>
+                    RFQ Number : <t t-if="object.name">
+                        <t t-out="object.name or ''"> RFQ Number </t>
+                    </t>
+                    <br>
+                    Current Stage : <t t-if="object.approval_status">
+                        <t t-out="object.approval_status or ''"> Approval Status </t>
+                    </t>
+                    <br>
+                    Link : <a t-if="object.get_rfq_url(object.company_id)" t-att-href="object.get_rfq_url(object.company_id)">Link</a> 
+                    <br>
+                     
+                    <br><br>
+                    * This email is automatically sent from the erp.infinityitsuccess.com *
+                    <br>                      
+                </p>
+            </div>                        
+        ]]></field>
+    </record>
+
+</odoo>

@@ -1,0 +1,24 @@
+<odoo>
+
+    <record id="module_category_infs_purchase" model="ir.module.category">
+        <field name="name">INFS Purchase</field>
+        <field name="description">Custom groups for purchase approvals and configuration</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="purchase_supervisor_level_1" model="res.groups">
+        <field name="name">Purchase Supervisor Level 1</field>
+        <field name="category_id" ref="module_category_infs_purchase"/>
+    </record>
+
+    <record id="purchase_supervisor_level_2" model="res.groups">
+        <field name="name">Purchase Supervisor Level 2</field>
+        <field name="category_id" ref="module_category_infs_purchase"/>
+    </record>
+
+    <record id="purchase_supervisor_level_3" model="res.groups">
+        <field name="name">Purchase Supervisor Level 3</field>
+        <field name="category_id" ref="module_category_infs_purchase"/>
+    </record>
+</odoo>
+        
