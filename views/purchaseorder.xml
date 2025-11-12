@@ -73,15 +73,6 @@
                 <attribute name="readonly">parent.approval_stage == 'confirmed'</attribute>
             </xpath>
 
-            <xpath expr="//form[@class='o_purchase_order']/header/field[@name='state']"
-                position="replace">
-                <field name="state"
-                    widget="statusbar"
-                    statusbar_visible="draft,approved,sent,purchase"
-                    readonly="1"
-                    on_change="1" />
-            </xpath>
-
             <!-- header buttons update for state=approved-->
 
             <!-- <xpath expr="(//header/button[@name='action_rfq_send'])[1]" position="replace">
