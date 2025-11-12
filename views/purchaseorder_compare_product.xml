@@ -1,0 +1,42 @@
+<odoo>
+    <data>
+        <record id="infs_pol_compare_tree_inherit_delay" model="ir.ui.view">
+            <field name="name">infs.pol.compare.tree.inherit.delay.why</field>
+            <field name="model">purchase.order.line</field>
+            <field name="inherit_id" ref="purchase_requisition.purchase_order_line_compare_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="replace">
+                    <tree string="Purchase Order Lines"
+                        decoration-muted="state in ['cancel', 'purchase', 'done']"
+                        create="0" delete="0" edit="0" expand="1"
+                        js_class="purchase_order_line_compare">
+                        <header>
+                            <button name="action_clear_quantities" string="Clear Selected"
+                                type="object"
+                                class="o_clear_qty_buttons" />
+                        </header>
+                        <field name="product_id" readonly="1" />
+                        <field name="partner_id" string="Vendor" />
+                        <field name="order_id" string="Reference" readonly="1" />
+                        <field name="state" />
+                        <field name="name" readonly="1" />
+                        <field name="date_planned" readonly="1" />
+                        <field name="delay_supplier" string="Delivery Terms" readonly="1" />
+                        <field name="product_qty" />
+                        <field name="product_uom" groups="uom.group_uom" />
+                        <field name="price_unit" />
+                        <field name="price_subtotal" string="Total" />
+                        <field name="currency_id" />
+                        <button name="action_choose" string="Choose" type="object"
+                            class="o_clear_qty_buttons"
+                            icon="fa-bullseye" invisible="product_qty &lt;= 0.0" />
+                        <button name="action_clear_quantities" string="Clear" type="object"
+                            class="o_clear_qty_buttons"
+                            icon="fa-times"
+                            invisible="product_qty &lt;= 0.0 or state in ['cancel', 'purchase', 'done']" />
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

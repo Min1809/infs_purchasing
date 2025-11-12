@@ -36,7 +36,7 @@
                     invisible="approval_stage != 'approved_lvl_2'" />
             </xpath>
 
-            <xpath expr="//sheet/group/group/field[@name='currency_id']" position="after">
+            <xpath expr="//div[@name='reminder']" position="after">
                 <field name="approval_status" readonly="1" />
                 <field name="approval_stage" readonly="1" invisible="1" />
             </xpath>
@@ -57,13 +57,46 @@
             </xpath>
 
             <xpath expr="//field[@name='order_line']" position="attributes">
-                <attribute name="readonly">approval_stage in ('submitted', 'approved_lvl_1', 'approved_lvl_2', 'approved')</attribute>
+                <attribute name="readonly">approval_stage in ('submitted', 'approved_lvl_1',
+                    'approved_lvl_2', 'approved')</attribute>
                 <!-- <attribute name="readonly">state != 'purchase'</attribute> -->
             </xpath>
 
-            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+            <xpath
+                expr="//page[@name='products']//field[@name='order_line']//field[@name='product_qty']"
+                position="attributes">
+                <attribute name="readonly">parent.approval_stage != 'draft'</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']"
+                position="attributes">
                 <attribute name="readonly">parent.approval_stage == 'confirmed'</attribute>
             </xpath>
+
+            <xpath expr="//form[@class='o_purchase_order']/header/field[@name='state']"
+                position="replace">
+                <field name="state"
+                    widget="statusbar"
+                    statusbar_visible="draft,approved,sent,purchase"
+                    readonly="1"
+                    on_change="1" />
+            </xpath>
+
+            <!-- header buttons update for state=approved-->
+
+            <!-- <xpath expr="(//header/button[@name='action_rfq_send'])[1]" position="replace">
+                <button name="action_rfq_send" invisible="state != 'approved'"
+                    string="Send by Email"
+                    type="object"
+                    context="{'send_rfq':True}" class="oe_highlight" data-hotkey="g" />
+            </xpath>
+
+            <xpath expr="//header/button[@name='button_cancel']" position="replace">
+                <button name="button_cancel"
+                    invisible="state not in ('draft', 'approved', 'to approve', 'sent', 'purchase')"
+                    string="Cancel"
+                    type="object" data-hotkey="x" />
+            </xpath> -->
 
         </field>
     </record>

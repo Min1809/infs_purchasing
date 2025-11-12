@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="purchase_order_form_inherit_delay" model="ir.ui.view">
+            <field name="name">purchase.order.form.inherit.delay</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']//field[@name='product_qty']"
+                    position="before">
+                    <field name="delay_supplier" string="Delivery Terms" readonly="parent.approval_stage != 'draft'"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- for alternative, but need to add delay_supplier field in the purchase order model -->
+        <!-- <record id="purchase_order_form_inherit_alternative_delay" model="ir.ui.view">
+            <field name="name">purchase.order.form.inherit.alternative.delay</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase_requisition.purchase_order_form_inherit" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='alternative_po_ids']//field[@name='amount_total']"
+                    position="before">
+                    <field name="delay_supplier" string="Days of Delay" readonly="1" />
+                </xpath>
+            </field>
+        </record> -->
+
+    </data>
+</odoo>

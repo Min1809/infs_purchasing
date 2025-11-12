@@ -12,6 +12,8 @@
     'data': [
         "security/group.xml",
         "views/purchaseorder.xml",
+        "views/purchaseorderline.xml",
+        "views/purchaseorder_compare_product.xml",
         "views/emails.xml",
         ],
     'installable': True,

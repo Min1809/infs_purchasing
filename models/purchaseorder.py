@@ -10,13 +10,28 @@ class PurchaseOrder(models.Model):
     
     approval_stage = fields.Selection([
         ('draft', 'Draft'),
-        ('submitted', 'Pending Approval'), 
-        ('approved_lvl_1', 'L1 Approved'), 
-        ('approved_lvl_2', 'L2 Approved'), 
-        ('approved', 'Final Approved'), 
+        ('submitted', 'Pending L1 Approval'), 
+        ('approved_lvl_1', 'Pending L2 Approval'), 
+        ('approved_lvl_2', 'Pending Final Approval'), 
+        ('approved', 'Approved'), 
         ('confirmed', 'Confirmed'), 
         ('canceled', 'Canceled'),
     ], default='draft', string='Approval Stage', tracking=True)
+
+    # state = fields.Selection([
+    #     ('draft', 'RFQ'),
+    #     ('approved', 'Approved'),
+    #     ('sent', 'RFQ Sent'),
+    #     ('purchase', 'Purchase Order'),
+    #     ('done', 'Locked'),
+    #     ('cancel', 'Cancelled'),
+    # ],
+    # string='Status',
+    # readonly=True,
+    # copy=False,
+    # index=True,
+    # tracking=3,
+    # default='draft')
     
     approval_status = fields.Char(string='Approval Status', compute='_compute_approval_status', store=True)
 
@@ -66,6 +81,7 @@ class PurchaseOrder(models.Model):
         elif self.approval_stage=="submitted":
             if not group_two.users and not group_three.users:
                 self.approval_stage = 'approved'
+                # self.state = 'approved'
                 self._send_approval_notification()
             else:
                 self.approval_stage = 'approved_lvl_1'
@@ -73,12 +89,13 @@ class PurchaseOrder(models.Model):
         elif self.approval_stage == "approved_lvl_1":
             if not group_three.users:
                 self.approval_stage = 'approved'
+                # self.state = 'approved'
                 self._send_approval_notification()
             else:
                 self.approval_stage = 'approved_lvl_2'
                 self._send_approval_notification()
         elif self.approval_stage == "approved_lvl_2":
-            self.approval_stage = 'approved'
+            # self.approval_stage = 'approved'
             self._send_approval_notification()            
             
     def _send_approval_notification(self):
@@ -94,6 +111,7 @@ class PurchaseOrder(models.Model):
             elif stage == 'approved_lvl_2':
                 self._send_approval_email('infs_purchasing.email_template_rfqlevel_3_approval', 'infs_purchasing.purchase_supervisor_level_3')
             elif stage == 'approved':
+                self.state = 'approved'
                 self.action_send_confirmed_mail_to_rfq()
                 _logger.info(f"Final approval email sent to the purchase order owner.")
         else:
