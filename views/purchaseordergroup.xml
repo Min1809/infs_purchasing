@@ -86,11 +86,11 @@
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
-                            <button class="oe_stat_button" 
-                                    type="object" 
-                                    name="action_compare_order_lines"
-                                    icon="fa-columns"
-                                    invisible="not order_ids">
+                            <button class="oe_stat_button"
+                                type="object"
+                                name="action_compare_order_lines"
+                                icon="fa-columns"
+                                invisible="not order_ids">
                                 <div class="o_stat_info">
                                     <span class="o_stat_text">Compare</span>
                                     <span class="o_stat_text">Lines</span>
@@ -106,7 +106,7 @@
 
                         <group>
                             <group>
-                                <field name="opportunity" string="Opportunity"/>
+                                <field name="opportunity" string="Opportunity" />
                                 <field name="create_date" string="Creation Date" />
                                 <field name="create_uid" string="Created By" />
                             </group>
@@ -155,61 +155,62 @@
                                                 model="purchase.order.line"
                                                 class="btn-secondary" />
                                         </header>
-                                        
+
                                         <!-- Product & Vendor Info -->
-                                        <field name="product_display_name" column_invisible="1"/>
-                                        <field name="product_id" readonly="1" 
+                                        <field name="product_display_name" column_invisible="1" />
+                                        <field name="product_id" readonly="1"
                                             decoration-bf="1"
-                                            class="o_product_group_header"/>
-                                        <field name="partner_id" string="Vendor" 
-                                            decoration-bf="1"/>
-                                        <field name="order_id" string="RFQ Reference" readonly="1" 
-                                            optional="hide"/>
-                                        
+                                            class="o_product_group_header" />
+                                        <field name="partner_id" string="Vendor"
+                                            decoration-bf="1" />
+                                        <field name="order_id" string="RFQ Reference" readonly="1"
+                                            optional="hide" />
+
                                         <!-- Pricing & Quantity -->
-                                        <field name="product_qty" string="Qty" 
-                                            decoration-bf="product_qty > 0.0"/>
-                                        <field name="product_uom" string="UoM" 
-                                            groups="uom.group_uom" optional="show"/>
-                                        <field name="price_unit" string="Unit Price" 
-                                            widget="monetary" 
-                                            decoration-info="1"/>
-                                        <field name="price_subtotal" string="Subtotal" 
+                                        <field name="product_qty" string="Qty"
+                                            decoration-bf="product_qty > 0.0" />
+                                        <field name="product_uom" string="UoM"
+                                            groups="uom.group_uom" optional="show" />
+                                        <field name="price_unit" string="Unit Price"
                                             widget="monetary"
-                                            decoration-bf="product_qty > 0.0"/>
-                                        <field name="currency_id" column_invisible="1"/>
-                                        
+                                            decoration-info="1" />
+                                        <field name="price_subtotal" string="Subtotal"
+                                            widget="monetary"
+                                            decoration-bf="product_qty > 0.0" />
+                                        <field name="currency_id" column_invisible="1" />
+
                                         <!-- Delivery Info -->
-                                        <field name="date_planned" string="Expected Date" 
-                                            optional="show"/>
+                                        <field name="date_planned" string="Expected Date"
+                                            optional="show" />
                                         <field name="delay_supplier" string="Delivery Terms"
-                                            optional="show"/>
-                                        
+                                            optional="show" />
+
                                         <!-- Status & Description -->
                                         <field name="state" widget="badge" optional="hide"
                                             decoration-success="state == 'purchase'"
                                             decoration-info="state == 'draft'"
                                             decoration-muted="state == 'cancel'" />
-                                        <field name="name" string="Description" readonly="1" 
-                                            optional="hide"/>
-                                        
+                                        <field name="name" string="Description" readonly="1"
+                                            optional="hide" />
+
                                         <!-- Actions -->
-                                        <button name="action_choose" 
-                                            string="Select This Vendor" 
+                                        <button name="action_choose" string="Choose" type="object"
+                                            class="o_clear_qty_buttons" icon="fa-bullseye"
+                                            groups="infs_purchasing.purchase_supervisor_level_1,infs_purchasing.purchase_supervisor_level_2,infs_purchasing.purchase_supervisor_level_3"
+                                            invisible="product_qty &lt;= 0.0" />
+                                        <button name="action_clear_quantities" string="Clear"
+                                            type="object" class="o_clear_qty_buttons"
+                                            icon="fa-times"
+                                            groups="infs_purchasing.purchase_supervisor_level_1,infs_purchasing.purchase_supervisor_level_2,infs_purchasing.purchase_supervisor_level_3"
+                                            invisible="product_qty &lt;= 0.0 or state in ['cancel', 'purchase', 'done']" />
+                                        <!-- <button name="action_choose"
+                                            string="Select This Vendor"
                                             type="object"
-                                            model="purchase.order.line" 
+                                            model="purchase.order.line"
                                             class="btn-primary"
                                             icon="fa-check-circle"
                                             groups="infs_purchasing.purchase_supervisor_level_1,infs_purchasing.purchase_supervisor_level_2,infs_purchasing.purchase_supervisor_level_3"
-                                            invisible="product_qty &lt;= 0.0" />
-                                        <button name="action_clear_quantities" 
-                                            string="Clear" 
-                                            type="object"
-                                            model="purchase.order.line" 
-                                            class="btn-link text-danger"
-                                            icon="fa-times-circle"
-                                            groups="infs_purchasing.purchase_supervisor_level_1,infs_purchasing.purchase_supervisor_level_2,infs_purchasing.purchase_supervisor_level_3"
-                                            invisible="product_qty &lt;= 0.0 or state in ['cancel', 'purchase', 'done']" />
+                                            invisible="product_qty &lt;= 0.0" /> -->
                                     </tree>
                                 </field>
                             </page>
