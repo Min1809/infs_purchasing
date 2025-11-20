@@ -5,7 +5,7 @@
             <field name="name">purchase.order.group.tree</field>
             <field name="model">purchase.order.group</field>
             <field name="arch" type="xml">
-                <tree string="Purchase Order Groups"
+                <tree string="RFQ Groups"
                     decoration-muted="approval_stage == 'canceled'"
                     decoration-info="approval_stage in ('draft', 'submitted')"
                     decoration-success="approval_stage == 'confirmed'"
@@ -30,7 +30,7 @@
             <field name="name">purchase.order.group.form</field>
             <field name="model">purchase.order.group</field>
             <field name="arch" type="xml">
-                <form string="Purchase Order Group">
+                <form string="RFQ Group">
                     <header>
                         <button name="check_stage_and_approve_after_confirmed"
                             string="Submit for Approval"
@@ -86,7 +86,7 @@
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
-                            <!-- <button class="oe_stat_button" 
+                            <button class="oe_stat_button" 
                                     type="object" 
                                     name="action_compare_order_lines"
                                     icon="fa-columns"
@@ -95,7 +95,7 @@
                                     <span class="o_stat_text">Compare</span>
                                     <span class="o_stat_text">Lines</span>
                                 </div>
-                            </button> -->
+                            </button>
                         </div>
 
                         <div class="oe_title">
@@ -141,40 +141,72 @@
                             </page>
 
                             <page string="Compare Lines" name="compare_lines">
-                                <field name="order_line_ids"
-                                    context="{'search_default_groupby_product': 1}">
-                                    <tree string="Purchase Order Lines"
+                                <field name="order_line_ids">
+                                    <tree string="Vendor Comparison by Product"
                                         decoration-muted="state in ['cancel', 'purchase', 'done']"
-                                        create="0" delete="0" edit="0" expand="1"
+                                        decoration-bf="product_qty > 0.0"
+                                        create="0" delete="0" edit="0"
+                                        default_order="product_id,price_unit"
+                                        multi_edit="1"
                                         js_class="purchase_order_line_compare">
                                         <header>
                                             <button name="action_clear_quantities"
-                                                string="Clear Selected" type="object"
+                                                string="Clear All Selected" type="object"
                                                 model="purchase.order.line"
-                                                class="o_clear_qty_buttons" />
+                                                class="btn-secondary" />
                                         </header>
-                                        <field name="product_id" readonly="1" />
-                                        <field name="partner_id" string="Vendor" />
-                                        <field name="order_id" string="Reference" readonly="1" />
-                                        <field name="state" widget="badge"
+                                        
+                                        <!-- Product & Vendor Info -->
+                                        <field name="product_display_name" column_invisible="1"/>
+                                        <field name="product_id" readonly="1" 
+                                            decoration-bf="1"
+                                            class="o_product_group_header"/>
+                                        <field name="partner_id" string="Vendor" 
+                                            decoration-bf="1"/>
+                                        <field name="order_id" string="RFQ Reference" readonly="1" 
+                                            optional="hide"/>
+                                        
+                                        <!-- Pricing & Quantity -->
+                                        <field name="product_qty" string="Qty" 
+                                            decoration-bf="product_qty > 0.0"/>
+                                        <field name="product_uom" string="UoM" 
+                                            groups="uom.group_uom" optional="show"/>
+                                        <field name="price_unit" string="Unit Price" 
+                                            widget="monetary" 
+                                            decoration-info="1"/>
+                                        <field name="price_subtotal" string="Subtotal" 
+                                            widget="monetary"
+                                            decoration-bf="product_qty > 0.0"/>
+                                        <field name="currency_id" column_invisible="1"/>
+                                        
+                                        <!-- Delivery Info -->
+                                        <field name="date_planned" string="Expected Date" 
+                                            optional="show"/>
+                                        <field name="delay_supplier" string="Lead Time"
+                                            optional="show"/>
+                                        
+                                        <!-- Status & Description -->
+                                        <field name="state" widget="badge" optional="hide"
                                             decoration-success="state == 'purchase'"
-                                            decoration-info="state == 'draft'" />
-                                        <field name="name" readonly="1" />
-                                        <field name="date_planned" readonly="1" />
-                                        <field name="delay_supplier" string="Delivery Terms"/>
-                                        <field name="product_qty" />
-                                        <field name="product_uom" groups="uom.group_uom" />
-                                        <field name="price_unit" />
-                                        <field name="price_subtotal" string="Total" />
-                                        <field name="currency_id" />
-                                        <button name="action_choose" string="Choose" type="object"
-                                            model="purchase.order.line" class="o_clear_qty_buttons"
-                                            icon="fa-bullseye"
-                                            invisible="product_qty &lt;= 0.0" />
-                                        <button name="action_clear_quantities" string="Clear"
+                                            decoration-info="state == 'draft'"
+                                            decoration-muted="state == 'cancel'" />
+                                        <field name="name" string="Description" readonly="1" 
+                                            optional="hide"/>
+                                        
+                                        <!-- Actions -->
+                                        <button name="action_choose" 
+                                            string="Select This Vendor" 
                                             type="object"
-                                            model="purchase.order.line" class="o_clear_qty_buttons"
-                                            icon="fa-times"
+                                            model="purchase.order.line" 
+                                            class="btn-primary"
+                                            icon="fa-check-circle"
+                                            invisible="product_qty &lt;= 0.0" />
+                                        <button name="action_clear_quantities" 
+                                            string="Clear" 
+                                            type="object"
+                                            model="purchase.order.line" 
+                                            class="btn-link text-danger"
+                                            icon="fa-times-circle"
                                             invisible="product_qty &lt;= 0.0 or state in ['cancel', 'purchase', 'done']" />
                                     </tree>
                                 </field>
@@ -204,15 +236,15 @@
 
         <!-- Action for Purchase Order Group -->
         <record id="action_purchase_order_group" model="ir.actions.act_window">
-            <field name="name">Purchase Order Groups</field>
+            <field name="name">RFQ Groups</field>
             <field name="res_model">purchase.order.group</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
-                    No Purchase Order Groups found
+                    No RFQ Groups found
                 </p>
                 <p>
-                    Create purchase order groups to organize and compare multiple purchase orders
+                    Create RFQ groups to organize and compare multiple purchase orders
                     together.
                 </p>
             </field>
@@ -220,7 +252,7 @@
 
         <!-- Menu Item - Under Purchase > Orders > Below Purchase Orders -->
         <menuitem id="menu_purchase_order_group"
-            name="Purchase Order Groups"
+            name="RFQ Groups"
             parent="purchase.menu_procurement_management"
             action="action_purchase_order_group"
             sequence="7" />

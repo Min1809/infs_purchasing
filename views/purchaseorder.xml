@@ -40,9 +40,9 @@
                 <field name="approval_status" readonly="1" />
                 <field name="purchase_group_id" string="Compare Group" readonly="1" invisible="not _is_inherit"/>
                 <field name="approval_stage" readonly="1" invisible="1" />
-                <field name="_is_visible" string="Is Visible" readonly="1"/>
-                <field name="is_approved" string="Is Approved" readonly="1"/>
-                <field name="_is_inherit" string="Is Inherit" readonly="1"/>
+                <field name="_is_visible" string="Is Visible" readonly="1" invisible="1"/>
+                <field name="is_approved" string="Is Approved" readonly="1" invisible="1"/>
+                <field name="_is_inherit" string="Is Inherit" readonly="1"  invisible="1"/>
                 
                 <!-- <field name="has_alternatives" string="Purchase Group" readonly="1"/> -->
             </xpath>

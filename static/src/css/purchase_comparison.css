@@ -1,0 +1,37 @@
+/* Visual separation for product groups in purchase order line comparison */
+
+/* Add spacing between different products */
+.o_list_view.purchase_order_line_compare tbody tr {
+    border-top: 2px solid transparent;
+}
+
+/* Detect product change by comparing data attributes and add visible separator */
+.o_list_view.purchase_order_line_compare tbody tr:not(:first-child) {
+    position: relative;
+}
+
+/* Add a thicker top border when product changes */
+.o_list_view.purchase_order_line_compare tbody tr[data-product-changed="true"] {
+    border-top: 3px solid #e9ecef !important;
+}
+
+/* Add slight background alternation for better visual grouping */
+.o_list_view.purchase_order_line_compare tbody tr[data-product-group="even"] {
+    background-color: #f8f9fa;
+}
+
+.o_list_view.purchase_order_line_compare tbody tr[data-product-group="odd"] {
+    background-color: #ffffff;
+}
+
+/* Highlight selected rows (with quantity) */
+.o_list_view.purchase_order_line_compare tbody tr.o_data_row[data-has-qty="true"] {
+    background-color: #e7f3ff !important;
+    border-left: 3px solid #0d6efd;
+}
+
+/* Make product name more prominent */
+.o_list_view.purchase_order_line_compare .o_product_group_header {
+    font-weight: 600;
+    color: #495057;
+}

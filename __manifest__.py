@@ -20,6 +20,12 @@
         "views/purchaseorder_compare_product.xml",
         "views/emails.xml",
         ],
+    'assets': {
+        'web.assets_backend': [
+            'infs_purchasing/static/src/css/purchase_comparison.css',
+            'infs_purchasing/static/src/js/purchase_order_line_compare.js',
+        ],
+    },
     'installable': True,
     'auto_install': False,
     'license': 'LGPL-3',

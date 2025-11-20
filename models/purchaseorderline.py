@@ -12,6 +12,17 @@ class PurchaseOrderLine(models.Model):
         default=0,
         tracking=True
     )
+    
+    product_display_name = fields.Char(
+        string='Product Group',
+        compute='_compute_product_display_name',
+        store=False
+    )
+    
+    @api.depends('product_id')
+    def _compute_product_display_name(self):
+        for line in self:
+            line.product_display_name = line.product_id.display_name if line.product_id else ''
 
     @api.onchange('product_id', 'order_id.partner_id')
     def _onchange_product_id_set_delay_supplier(self):
