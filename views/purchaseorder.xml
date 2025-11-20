@@ -9,7 +9,7 @@
                 <button name="check_stage_and_approve_after_confirmed" type="object"
                     string="Submit for Approval"
                     class="oe_highlight"
-                    invisible="approval_stage != 'draft'" />
+                    invisible="approval_stage != 'draft' or (_is_visible == False and purchase_group_id)" />
             </xpath>
 
             <xpath expr="//header/button[@name='action_rfq_send']" position="before">
@@ -17,7 +17,7 @@
                     string="RFQ Approve L1"
                     class="oe_highlight"
                     group="infs_purchasing.purchase_supervisor_level_1"
-                    invisible="approval_stage != 'submitted'" />
+                    invisible="approval_stage != 'submitted' or (_is_visible == False and purchase_group_id)" />
             </xpath>
 
             <xpath expr="//header/button[@name='action_rfq_send']" position="before">
@@ -25,7 +25,7 @@
                     string="RFQ Approve L2"
                     class="oe_highlight"
                     group="infs_purchasing.purchase_supervisor_level_2"
-                    invisible="approval_stage != 'approved_lvl_1'" />
+                    invisible="approval_stage != 'approved_lvl_1' or (_is_visible == False and purchase_group_id)" />
             </xpath>
 
             <xpath expr="//header/button[@name='action_rfq_send']" position="before">
@@ -33,12 +33,18 @@
                     string="RFQ Approve L3"
                     class="oe_highlight"
                     group="infs_purchasing.purchase_supervisor_level_3"
-                    invisible="approval_stage != 'approved_lvl_2'" />
+                    invisible="approval_stage != 'approved_lvl_2' or (_is_visible == False and purchase_group_id)" />
             </xpath>
 
             <xpath expr="//div[@name='reminder']" position="after">
                 <field name="approval_status" readonly="1" />
+                <field name="purchase_group_id" string="Compare Group" readonly="1" invisible="not _is_inherit"/>
                 <field name="approval_stage" readonly="1" invisible="1" />
+                <field name="_is_visible" string="Is Visible" readonly="1"/>
+                <field name="is_approved" string="Is Approved" readonly="1"/>
+                <field name="_is_inherit" string="Is Inherit" readonly="1"/>
+                
+                <!-- <field name="has_alternatives" string="Purchase Group" readonly="1"/> -->
             </xpath>
 
             <xpath expr="(//button[@name='button_confirm'])[1]" position="replace">
@@ -90,5 +96,6 @@
             </xpath> -->
 
         </field>
+
     </record>
-</odoo>
+</odoo> 

@@ -2,3 +2,5 @@
 
 from . import purchaseorder
 from . import purchaseorderline
+from . import accountmove
+from . import purchasegroup

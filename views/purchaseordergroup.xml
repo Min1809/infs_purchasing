@@ -1,0 +1,228 @@
+<odoo>
+    <data>
+        <!-- Tree View for Purchase Order Group (Similar to RFQ View) -->
+        <record id="view_purchase_order_group_tree" model="ir.ui.view">
+            <field name="name">purchase.order.group.tree</field>
+            <field name="model">purchase.order.group</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Order Groups"
+                    decoration-muted="approval_stage == 'canceled'"
+                    decoration-info="approval_stage in ('draft', 'submitted')"
+                    decoration-success="approval_stage == 'confirmed'"
+                    sample="1">
+                    <field name="priority" optional="show" widget="priority" nolabel="1" />
+                    <field name="display_name" string="Reference" readonly="1" decoration-bf="1" />
+                    <field name="create_date" string="Creation Date" optional="show" />
+                    <field name="create_uid" string="Created By" widget="many2one_avatar_user"
+                        optional="show" />
+                    <field name="write_date" string="Last Updated" optional="hide" />
+                    <field name="order_ids" widget="many2many_tags" optional="show" />
+                    <field name="approval_stage" optional="show" widget="badge"
+                        decoration-success="approval_stage == 'confirmed' or approval_stage == 'approved'"
+                        decoration-warning="approval_stage in ('submitted', 'approved_lvl_1', 'approved_lvl_2')"
+                        decoration-info="approval_stage == 'draft'" />
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form View for Purchase Order Group with Approval Workflow -->
+        <record id="view_purchase_order_group_form" model="ir.ui.view">
+            <field name="name">purchase.order.group.form</field>
+            <field name="model">purchase.order.group</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Order Group">
+                    <header>
+                        <button name="check_stage_and_approve_after_confirmed"
+                            string="Submit for Approval"
+                            type="object"
+                            class="btn-primary"
+                            invisible="approval_stage != 'draft'" />
+                        <button name="check_stage_and_approve_after_confirmed"
+                            string="Approve L1"
+                            type="object"
+                            class="btn-primary"
+                            group="infs_purchasing.purchase_supervisor_level_1"
+                            invisible="approval_stage != 'submitted'" />
+                        <button name="check_stage_and_approve_after_confirmed"
+                            string="Approve L2"
+                            type="object"
+                            class="btn-primary"
+                            group="infs_purchasing.purchase_supervisor_level_2"
+                            invisible="approval_stage != 'approved_lvl_1'" />
+                        <button name="check_stage_and_approve_after_confirmed"
+                            string="Final Approval"
+                            type="object"
+                            class="btn-primary"
+                            group="infs_purchasing.purchase_supervisor_level_3"
+                            invisible="approval_stage != 'approved_lvl_2'" />
+                        <!-- <button name="action_confirm"
+                            string="Confirm"
+                            type="object"
+                            class="btn-primary"
+                            invisible="approval_stage != 'approved'" /> -->
+                        <button name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            invisible="approval_stage in ('canceled', 'confirmed')" />
+                        <button name="action_reset_to_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="approval_stage != 'canceled'" />
+
+                        <field name="has_supervisor_2" invisible="1" />
+                        <field name="has_supervisor_3" invisible="1" />
+
+                        <field name="approval_stage" widget="statusbar"
+                            statusbar_visible="draft,submitted,approved,confirmed"
+                            invisible="has_supervisor_2 or has_supervisor_3" />
+
+                        <field name="approval_stage" widget="statusbar"
+                            statusbar_visible="draft,submitted,approved_lvl_1,approved,confirmed"
+                            invisible="not has_supervisor_2 or has_supervisor_3" />
+
+                        <field name="approval_stage" widget="statusbar"
+                            statusbar_visible="draft,submitted,approved_lvl_1,approved_lvl_2,approved,confirmed"
+                            invisible="not has_supervisor_2 or not has_supervisor_3" />
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <!-- <button class="oe_stat_button" 
+                                    type="object" 
+                                    name="action_compare_order_lines"
+                                    icon="fa-columns"
+                                    invisible="not order_ids">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_text">Compare</span>
+                                    <span class="o_stat_text">Lines</span>
+                                </div>
+                            </button> -->
+                        </div>
+
+                        <div class="oe_title">
+                            <h1>
+                                <field name="display_name" readonly="1" />
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group>
+                                <field name="opportunity" string="Opportunity"/>
+                                <field name="create_date" string="Creation Date" />
+                                <field name="create_uid" string="Created By" />
+                            </group>
+                            <group>
+                                <field name="write_date" string="Last Updated" />
+                                <field name="write_uid" string="Last Updated By" />
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="RFQ" name="alternative_pos">
+                                <field name="order_ids">
+                                    <tree string="Alternative Purchase Orders"
+                                        decoration-muted="state in ['cancel', 'purchase', 'done']"
+                                        create="1" delete="1">
+                                        <!-- <control>
+                                            <create string="Add Purchase Order"/>
+                                        </control> -->
+                                        <field name="currency_id" column_invisible="1" />
+                                        <field name="partner_id"
+                                            readonly="state in ['cancel', 'done', 'purchase']" />
+                                        <field name="name" string="Reference" />
+                                        <field name="date_order" string="Order Date" />
+                                        <!-- <field name="delay_supplier" string="Delivery Terms"/> -->
+                                        <field name="amount_total" widget="monetary" />
+                                        <field name="state" widget="badge"
+                                            decoration-success="state == 'purchase'"
+                                            decoration-info="state in ('draft', 'sent')"
+                                            decoration-warning="state == 'to approve'" />
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <page string="Compare Lines" name="compare_lines">
+                                <field name="order_line_ids"
+                                    context="{'search_default_groupby_product': 1}">
+                                    <tree string="Purchase Order Lines"
+                                        decoration-muted="state in ['cancel', 'purchase', 'done']"
+                                        create="0" delete="0" edit="0" expand="1"
+                                        js_class="purchase_order_line_compare">
+                                        <header>
+                                            <button name="action_clear_quantities"
+                                                string="Clear Selected" type="object"
+                                                model="purchase.order.line"
+                                                class="o_clear_qty_buttons" />
+                                        </header>
+                                        <field name="product_id" readonly="1" />
+                                        <field name="partner_id" string="Vendor" />
+                                        <field name="order_id" string="Reference" readonly="1" />
+                                        <field name="state" widget="badge"
+                                            decoration-success="state == 'purchase'"
+                                            decoration-info="state == 'draft'" />
+                                        <field name="name" readonly="1" />
+                                        <field name="date_planned" readonly="1" />
+                                        <field name="delay_supplier" string="Delivery Terms"/>
+                                        <field name="product_qty" />
+                                        <field name="product_uom" groups="uom.group_uom" />
+                                        <field name="price_unit" />
+                                        <field name="price_subtotal" string="Total" />
+                                        <field name="currency_id" />
+                                        <button name="action_choose" string="Choose" type="object"
+                                            model="purchase.order.line" class="o_clear_qty_buttons"
+                                            icon="fa-bullseye"
+                                            invisible="product_qty &lt;= 0.0" />
+                                        <button name="action_clear_quantities" string="Clear"
+                                            type="object"
+                                            model="purchase.order.line" class="o_clear_qty_buttons"
+                                            icon="fa-times"
+                                            invisible="product_qty &lt;= 0.0 or state in ['cancel', 'purchase', 'done']" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <!-- <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div> -->
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View for Order Lines with Product Grouping -->
+        <record id="view_purchase_order_line_search_group" model="ir.ui.view">
+            <field name="name">purchase.order.line.search.group</field>
+            <field name="model">purchase.order.line</field>
+            <field name="arch" type="xml">
+                <search string="Purchase Order Lines">
+                    <filter string="Group by Product" name="groupby_product"
+                        context="{'group_by': 'product_id'}" />
+                </search>
+            </field>
+        </record>
+
+        <!-- Action for Purchase Order Group -->
+        <record id="action_purchase_order_group" model="ir.actions.act_window">
+            <field name="name">Purchase Order Groups</field>
+            <field name="res_model">purchase.order.group</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No Purchase Order Groups found
+                </p>
+                <p>
+                    Create purchase order groups to organize and compare multiple purchase orders
+                    together.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Item - Under Purchase > Orders > Below Purchase Orders -->
+        <menuitem id="menu_purchase_order_group"
+            name="Purchase Order Groups"
+            parent="purchase.menu_procurement_management"
+            action="action_purchase_order_group"
+            sequence="7" />
+    </data>
+</odoo>

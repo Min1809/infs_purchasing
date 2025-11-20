@@ -7,7 +7,7 @@ _logger = logging.getLogger(__name__)
 
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
-    
+
     approval_stage = fields.Selection([
         ('draft', 'Draft'),
         ('submitted', 'Pending L1 Approval'), 
@@ -16,52 +16,86 @@ class PurchaseOrder(models.Model):
         ('approved', 'Approved'), 
         ('confirmed', 'Confirmed'), 
         ('canceled', 'Canceled'),
-    ], default='draft', string='Approval Stage', tracking=True)
-
-    # state = fields.Selection([
-    #     ('draft', 'RFQ'),
-    #     ('approved', 'Approved'),
-    #     ('sent', 'RFQ Sent'),
-    #     ('purchase', 'Purchase Order'),
-    #     ('done', 'Locked'),
-    #     ('cancel', 'Cancelled'),
-    # ],
-    # string='Status',
-    # readonly=True,
-    # copy=False,
-    # index=True,
-    # tracking=3,
-    # default='draft')
+    ], string='Approval Stage', compute='_compute_approval_stage', store=True, readonly=False, tracking=True)
     
     approval_status = fields.Char(string='Approval Status', compute='_compute_approval_status', store=True)
+
+    _is_visible = fields.Boolean(string="Is Visible", store=True, default=True)
+
+    is_approved = fields.Boolean(string="Is Approved", default=False, store=True)
+
+    _is_inherit = fields.Boolean(string="Has group", compute='_compute_is_inherit', store=True)
+
+    @api.depends('purchase_group_id')
+    def _compute_is_inherit(self):
+        for order in self:
+            if order.purchase_group_id:
+                order._is_inherit = True
+                if order.is_approved:
+                    order._is_visible = True
+                else:
+                    order._is_visible = False
+            else:
+                order._is_inherit = False
+                order._is_visible = True
+
+
+    @api.depends('purchase_group_id', 'purchase_group_id.approval_stage', 'is_approved')
+    # @api.depends('purchase_group_id', 'is_approved')
+    def _compute_approval_stage(self):
+        for order in self:
+            if not order.is_approved:
+                gp_id = order.purchase_group_id
+                gp_stage = gp_id.approval_stage if gp_id else None
+                if gp_id and gp_stage != 'approved':
+                    order.approval_stage = gp_stage
+                elif gp_id and gp_stage == 'approved':
+                    order.is_approved = True
+                    order.approval_stage = gp_stage
+                elif not order.approval_stage:
+                    order.approval_stage = 'draft'
+            # else:
+            #     order.approval_stage = order.approval_stage
 
     @api.depends('approval_stage')
     def _compute_approval_status(self):
         for order in self:
+            if order.purchase_group_id:
+                _logger.info(f"Purchase Order Group found for PO {order.purchase_group_id}")
             order.approval_status = dict(self._fields['approval_stage'].selection).get(order.approval_stage)
             
     def button_draft(self):
         res = super(PurchaseOrder, self).button_draft()
-        self.approval_stage = 'draft'
+        if self.is_approved or not self.purchase_group_id:
+            self.approval_stage = 'draft'
+            self._is_visible = True
+        elif not self.is_approved and self.purchase_group_id:
+            raise UserError(_("Cannot set to draft, please reset to draft the related RFQ Group first."))
+        else:
+            raise UserError(_("Cannot set to draft when not approved, please cancel the related RFQ Group first."))
         return res
     
     def button_cancel(self):
         res = super(PurchaseOrder, self).button_cancel()
-        self.approval_stage = 'canceled'
+        if self.is_approved or not self.purchase_group_id:
+            self.approval_stage = 'canceled'
+            self._is_visible = True
+        else:            
+            raise UserError(_("Cannot set to cancel when not approved, please cancel the related RFQ Group first."))
         return res
     
     def button_confirm(self):
-        if not self.approval_stage == 'approved':
-            raise UserError(_("Purchase Order must be fully approved before confirmation. Current stage: %s") % self.approval_stage)
-        else:
-            self.approval_stage = 'confirmed'
-            res = super(PurchaseOrder, self).button_confirm()
-            return res
+        res = super(PurchaseOrder, self).button_confirm()
+        self.approval_stage = 'confirmed'
+        return res
 
     def action_submit_rfq(self):
         if self.approval_stage == 'draft':
-            self.approval_stage = 'submitted'
-        _logger.info(f"RFQ {self.name} submitted for approval.")
+            if self.purchase_group_id:
+                self._is_visible = False
+                self.purchase_group_id.approval_stage = 'submitted'
+            else:
+                self.approval_stage = 'submitted'
         
     def check_approval_mail_status(self):
         status = self.env['ir.config_parameter'].sudo().get_param('send_approval_mails', 'False').strip().lower() == 'true'
@@ -70,31 +104,36 @@ class PurchaseOrder(models.Model):
     def check_stage_and_approve_after_confirmed(self):
         group_one = self.env.ref('infs_purchasing.purchase_supervisor_level_1')
         group_two = self.env.ref('infs_purchasing.purchase_supervisor_level_2')
-        group_three = self.env.ref('infs_purchasing.purchase_supervisor_level_3')
+        group_three = self.env.ref('infs_purchasing.purchase_supervisor_level_3')        
 
-        if self.approval_stage=="draft":
-            if group_one.users:
-                self.approval_stage = 'submitted'
-                self._send_approval_notification()                
-            else:
-                _logger.info("No users in Level 1 group, auto-approving to 'approved'.")
-        elif self.approval_stage=="submitted":
-            if not group_two.users and not group_three.users:
+        if not self.purchase_group_id or self.is_approved:
+            if self.approval_stage=="draft":
+                if group_one.users:                    
+                    self.approval_stage = 'submitted'
+                    # self.is_approved = False
+                    self._is_visible = True
+                    self._send_approval_notification()
+                else:
+                    _logger.info("No users in Level 1 group, auto-approving to 'approved'.")
+            elif self.approval_stage=="submitted":
+                if not group_two.users and not group_three.users:
+                    self.approval_stage = 'approved'
+                    self._send_approval_notification()
+                else:
+                    self.approval_stage = 'approved_lvl_1'
+                    self._send_approval_notification()
+            elif self.approval_stage == "approved_lvl_1":
+                if not group_three.users:
+                    self.approval_stage = 'approved'
+                    self._send_approval_notification()
+                else:
+                    self.approval_stage = 'approved_lvl_2'
+                    self._send_approval_notification()
+            elif self.approval_stage == "approved_lvl_2":
                 self.approval_stage = 'approved'
                 self._send_approval_notification()
-            else:
-                self.approval_stage = 'approved_lvl_1'
-                self._send_approval_notification()
-        elif self.approval_stage == "approved_lvl_1":
-            if not group_three.users:
-                self.approval_stage = 'approved'
-                self._send_approval_notification()
-            else:
-                self.approval_stage = 'approved_lvl_2'
-                self._send_approval_notification()
-        elif self.approval_stage == "approved_lvl_2":
-            self.approval_stage = 'approved'
-            self._send_approval_notification()            
+        else:
+            raise UserError(_('Cannot submit/approve RFQ if the RFQ Group is not approved. Please get the RFQ Group approved first.'))
             
     def _send_approval_notification(self):
         stage = self.approval_stage
@@ -174,8 +213,8 @@ class PurchaseOrder(models.Model):
                 try:
                     if send_approval_mails:
                         _logger.info(f"Attempting to send email to {order.user_id.partner_id.email} for RFQ {order.name}.")         
-                        # template.write({'email_to': email_to,'email_from': 'Infinity IT Group - CRM <crm@infinityitsuccess.com>',})   
-                        template.write({'email_to': email_to,'email_from': 'Min Pyae Sone - adMIN <minpyaesone.dev@gmail.com>',})
+                        template.write({'email_to': email_to,'email_from': 'Infinity IT Group - CRM <crm@infinityitsuccess.com>',})   
+                        # template.write({'email_to': email_to,'email_from': 'Min Pyae Sone - adMIN <minpyaesone.dev@gmail.com>',})
                         template.send_mail(order.id, force_send=True, raise_exception=True)
                         _logger.info(f"Email successfully sent to {order.user_id.partner_id.email}.")
                     else:

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_purchase_group_cancel_wizard_form" model="ir.ui.view">
+        <field name="name">purchase.group.cancel.wizard.form</field>
+        <field name="model">purchase.group.cancel.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Cancel Purchase Order Group">
+                <div class="alert alert-warning" role="alert">
+                    <field name="message" readonly="1" nolabel="1"/>
+                </div>
+                <field name="group_id" invisible="1"/>
+                <field name="show_cancel_button" invisible="1"/>
+                <footer>
+                    <button name="action_confirm_cancel" string="Yes, I am sure." type="object" class="btn-primary" invisible="not show_cancel_button"/>
+                    <button name="action_go_back" string="No, go back." type="object" class="btn-secondary" invisible="not show_cancel_button"/>
+                    <button name="action_go_back" string="Go Back" type="object" class="btn-primary" invisible="show_cancel_button"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
