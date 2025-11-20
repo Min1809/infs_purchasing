@@ -26,6 +26,13 @@ class PurchaseOrder(models.Model):
 
     _is_inherit = fields.Boolean(string="Has group", compute='_compute_is_inherit', store=True)
 
+    has_zero_qty_lines = fields.Boolean(string="Has Zero Qty Lines", compute='_compute_has_zero_qty_lines')
+
+    @api.depends('order_line', 'order_line.product_qty')
+    def _compute_has_zero_qty_lines(self):
+        for order in self:
+            order.has_zero_qty_lines = any(line.product_qty == 0 for line in order.order_line)
+
     @api.depends('purchase_group_id')
     def _compute_is_inherit(self):
         for order in self:
@@ -221,6 +228,16 @@ class PurchaseOrder(models.Model):
                         _logger.info(f"Approval mails are disabled. Not sending email for RFQ {order.name}.")
                 except Exception as e:
                     _logger.error(f"Failed to send email for RFQ {order.name}. Error: {e}")
+    
+    def action_clear_zero_qty_lines(self):
+        """Remove purchase order lines with 0 product_qty"""
+        for order in self:
+            zero_qty_lines = order.order_line.filtered(lambda line: line.product_qty == 0)
+            if zero_qty_lines:
+                _logger.info(f"Removing {len(zero_qty_lines)} lines with 0 quantity from PO {order.name}.")
+                zero_qty_lines.unlink()
+            else:
+                _logger.info(f"No lines with 0 quantity found in PO {order.name}.")
             
             
         

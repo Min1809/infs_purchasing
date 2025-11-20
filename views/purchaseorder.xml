@@ -16,7 +16,7 @@
                 <button name="check_stage_and_approve_after_confirmed" type="object"
                     string="RFQ Approve L1"
                     class="oe_highlight"
-                    group="infs_purchasing.purchase_supervisor_level_1"
+                    groups="infs_purchasing.purchase_supervisor_level_1"
                     invisible="approval_stage != 'submitted' or (_is_visible == False and purchase_group_id)" />
             </xpath>
 
@@ -24,7 +24,7 @@
                 <button name="check_stage_and_approve_after_confirmed" type="object"
                     string="RFQ Approve L2"
                     class="oe_highlight"
-                    group="infs_purchasing.purchase_supervisor_level_2"
+                    groups="infs_purchasing.purchase_supervisor_level_2"
                     invisible="approval_stage != 'approved_lvl_1' or (_is_visible == False and purchase_group_id)" />
             </xpath>
 
@@ -32,7 +32,7 @@
                 <button name="check_stage_and_approve_after_confirmed" type="object"
                     string="RFQ Approve L3"
                     class="oe_highlight"
-                    group="infs_purchasing.purchase_supervisor_level_3"
+                    groups="infs_purchasing.purchase_supervisor_level_3"
                     invisible="approval_stage != 'approved_lvl_2' or (_is_visible == False and purchase_group_id)" />
             </xpath>
 
@@ -43,6 +43,7 @@
                 <field name="_is_visible" string="Is Visible" readonly="1" invisible="1"/>
                 <field name="is_approved" string="Is Approved" readonly="1" invisible="1"/>
                 <field name="_is_inherit" string="Is Inherit" readonly="1"  invisible="1"/>
+                <field name="has_zero_qty_lines" invisible="1"/>
                 
                 <!-- <field name="has_alternatives" string="Purchase Group" readonly="1"/> -->
             </xpath>
@@ -94,6 +95,13 @@
                     string="Cancel"
                     type="object" data-hotkey="x" />
             </xpath> -->
+
+            <xpath expr="//header/button[@name='button_cancel']" position="after">
+                <button name="action_clear_zero_qty_lines" type="object"
+                    string="Clear Line"
+                    invisible="approval_stage != 'approved' and not has_zero_qty_lines"
+                    confirm="Are you sure you want to remove all lines with 0 quantity?" />
+            </xpath>
 
         </field>
 

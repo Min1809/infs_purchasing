@@ -41,19 +41,19 @@
                             string="Approve L1"
                             type="object"
                             class="btn-primary"
-                            group="infs_purchasing.purchase_supervisor_level_1"
+                            groups="infs_purchasing.purchase_supervisor_level_1"
                             invisible="approval_stage != 'submitted'" />
                         <button name="check_stage_and_approve_after_confirmed"
                             string="Approve L2"
                             type="object"
                             class="btn-primary"
-                            group="infs_purchasing.purchase_supervisor_level_2"
+                            groups="infs_purchasing.purchase_supervisor_level_2"
                             invisible="approval_stage != 'approved_lvl_1'" />
                         <button name="check_stage_and_approve_after_confirmed"
                             string="Final Approval"
                             type="object"
                             class="btn-primary"
-                            group="infs_purchasing.purchase_supervisor_level_3"
+                            groups="infs_purchasing.purchase_supervisor_level_3"
                             invisible="approval_stage != 'approved_lvl_2'" />
                         <!-- <button name="action_confirm"
                             string="Confirm"
@@ -182,7 +182,7 @@
                                         <!-- Delivery Info -->
                                         <field name="date_planned" string="Expected Date" 
                                             optional="show"/>
-                                        <field name="delay_supplier" string="Lead Time"
+                                        <field name="delay_supplier" string="Delivery Terms"
                                             optional="show"/>
                                         
                                         <!-- Status & Description -->
@@ -200,6 +200,7 @@
                                             model="purchase.order.line" 
                                             class="btn-primary"
                                             icon="fa-check-circle"
+                                            groups="infs_purchasing.purchase_supervisor_level_1,infs_purchasing.purchase_supervisor_level_2,infs_purchasing.purchase_supervisor_level_3"
                                             invisible="product_qty &lt;= 0.0" />
                                         <button name="action_clear_quantities" 
                                             string="Clear" 
@@ -207,6 +208,7 @@
                                             model="purchase.order.line" 
                                             class="btn-link text-danger"
                                             icon="fa-times-circle"
+                                            groups="infs_purchasing.purchase_supervisor_level_1,infs_purchasing.purchase_supervisor_level_2,infs_purchasing.purchase_supervisor_level_3"
                                             invisible="product_qty &lt;= 0.0 or state in ['cancel', 'purchase', 'done']" />
                                     </tree>
                                 </field>
