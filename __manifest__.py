@@ -13,12 +13,12 @@
         # "data/sequence.xml",
         "security/group.xml",
         "security/ir.model.access.csv",
-        "views/purchaseorder.xml",
-        "views/purchaseorderline.xml",
-        "views/purchaseordergroup.xml",
-        "wizard/purchase_group_cancel_wizard_view.xml",
-        "views/purchaseorder_compare_product.xml",
-        "views/emails.xml",
+        # "views/purchaseorder.xml",
+        # "views/purchaseorderline.xml",
+        # "views/purchaseordergroup.xml",
+        # "wizard/purchase_group_cancel_wizard_view.xml",
+        # "views/purchaseorder_compare_product.xml",
+        # "views/emails.xml",
         ],
     'assets': {
         'web.assets_backend': [
