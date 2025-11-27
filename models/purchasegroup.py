@@ -27,6 +27,13 @@ class PurchaseOrderGroupInherit(models.Model):
     has_supervisor_2 = fields.Boolean(string='Has Level 2 Supervisor', compute='_compute_has_supervisor_2', default=False)
     has_supervisor_3 = fields.Boolean(string='Has Level 3 Supervisor', compute='_compute_has_supervisor_3', default=False)
 
+    rfqs_sent = fields.Boolean(string='RFQs Sent', compute='_compute_rfqs_sent', default=False)
+
+    @api.depends('order_ids.state')
+    def _compute_rfqs_sent(self):
+        for record in self:
+            record.rfqs_sent = all(order.state in ['sent'] for order in record.order_ids) if record.order_ids else False
+
     @api.depends('approval_stage')
     def _compute_approval_status(self):
         for order in self:

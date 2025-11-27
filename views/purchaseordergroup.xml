@@ -36,7 +36,7 @@
                             string="Submit for Approval"
                             type="object"
                             class="btn-primary"
-                            invisible="approval_stage != 'draft'" />
+                            invisible="approval_stage != 'draft' or not rfqs_sent" />
                         <button name="check_stage_and_approve_after_confirmed"
                             string="Approve L1"
                             type="object"
@@ -71,6 +71,7 @@
 
                         <field name="has_supervisor_2" invisible="1" />
                         <field name="has_supervisor_3" invisible="1" />
+                        <field name="rfqs_sent" readonly="1" />
 
                         <field name="approval_stage" widget="statusbar"
                             statusbar_visible="draft,submitted,approved,confirmed"
