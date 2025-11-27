@@ -206,8 +206,8 @@ class PurchaseOrderGroupInherit(models.Model):
                 template = self.env.ref(template_xml_id)
                 email_to = self.get_email_to(mail_to_group)
                 if email_to:
-                    # template.write({'email_to': email_to,'email_from': 'Infinity IT Group - CRM <crm@infinityitsuccess.com>',})
-                    template.write({'email_to': email_to,'email_from': 'Min Pyae Sone - adMIN <minpyaesone.dev@gmail.com>',})
+                    template.write({'email_to': email_to,'email_from': 'Infinity IT Group - CRM <crm@infinityitsuccess.com>',})
+                    # template.write({'email_to': email_to,'email_from': 'Min Pyae Sone - adMIN <minpyaesone.dev@gmail.com>',})
                     for order in self:
                         _logger.info(f"Attempting to send testing email for{order.name}.")
                         _logger.info(f"This is self {self.id}.")
@@ -241,8 +241,8 @@ class PurchaseOrderGroupInherit(models.Model):
                 try:
                     if send_approval_mails:
                         _logger.info(f"Attempting to send email to {order.create_uid.partner_id.email} for RFQ Group {order.name}.")         
-                        # template.write({'email_to': email_to,'email_from': 'Infinity IT Group - CRM <crm@infinityitsuccess.com>',})   
-                        template.write({'email_to': email_to,'email_from': 'Min Pyae Sone - adMIN <minpyaesone.dev@gmail.com>',})
+                        template.write({'email_to': email_to,'email_from': 'Infinity IT Group - CRM <crm@infinityitsuccess.com>',})   
+                        # template.write({'email_to': email_to,'email_from': 'Min Pyae Sone - adMIN <minpyaesone.dev@gmail.com>',})
                         template.send_mail(order.id, force_send=True, raise_exception=True)
                         _logger.info(f"Email successfully sent to {order.create_uid.partner_id.email}.")
                     else:

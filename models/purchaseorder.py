@@ -193,8 +193,8 @@ class PurchaseOrder(models.Model):
                 template = self.env.ref(template_xml_id)
                 email_to = self.get_email_to(mail_to_group)
                 if email_to:
-                    # template.write({'email_to': email_to,'email_from': 'Infinity IT Group - CRM <crm@infinityitsuccess.com>',})
-                    template.write({'email_to': email_to,'email_from': 'Min Pyae Sone - adMIN <minpyaesone.dev@gmail.com>',})
+                    template.write({'email_to': email_to,'email_from': 'Infinity IT Group - CRM <crm@infinityitsuccess.com>',})
+                    # template.write({'email_to': email_to,'email_from': 'Min Pyae Sone - adMIN <minpyaesone.dev@gmail.com>',})
                     for order in self:
                         _logger.info(f"Attempting to send testing email for{order.name}.")
                         _logger.info(f"This is self {self.id}.")
