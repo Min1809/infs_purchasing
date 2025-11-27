@@ -71,7 +71,7 @@
 
                         <field name="has_supervisor_2" invisible="1" />
                         <field name="has_supervisor_3" invisible="1" />
-                        <field name="rfqs_sent" readonly="1" />
+                        <field name="rfqs_sent" invisible="1" />
 
                         <field name="approval_stage" widget="statusbar"
                             statusbar_visible="draft,submitted,approved,confirmed"
@@ -217,11 +217,11 @@
                             </page>
                         </notebook>
                     </sheet>
-                    <!-- <div class="oe_chatter">
+                    <div class="oe_chatter">
                         <field name="message_follower_ids"/>
                         <field name="activity_ids"/>
                         <field name="message_ids"/>
-                    </div> -->
+                    </div>
                 </form>
             </field>
         </record>

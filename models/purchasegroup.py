@@ -5,7 +5,8 @@ import logging
 _logger = logging.getLogger(__name__)
 
 class PurchaseOrderGroupInherit(models.Model):
-    _inherit = 'purchase.order.group'
+    _name = 'purchase.order.group'
+    _inherit = ['purchase.order.group', 'mail.thread', 'mail.activity.mixin']
     
     approval_stage = fields.Selection([
         ('draft', 'Draft'),
