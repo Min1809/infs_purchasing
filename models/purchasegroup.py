@@ -142,6 +142,7 @@ class PurchaseOrderGroupInherit(models.Model):
                     record.approval_stage = 'submitted'
                     for order in record.order_ids:
                         order._is_visible = False
+                        order.state = 'sent'
                 self._send_approval_notification()                
             else:
                 raise UserError(_('No supervisor to approve this Purchase Order Group, please contact your administrator.'))

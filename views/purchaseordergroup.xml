@@ -36,7 +36,7 @@
                             string="Submit for Approval"
                             type="object"
                             class="btn-primary"
-                            invisible="approval_stage != 'draft' or not rfqs_sent" />
+                            invisible="approval_stage != 'draft'" />
                         <button name="check_stage_and_approve_after_confirmed"
                             string="Approve L1"
                             type="object"

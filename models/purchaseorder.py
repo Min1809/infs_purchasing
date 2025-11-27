@@ -96,14 +96,13 @@ class PurchaseOrder(models.Model):
         self.approval_stage = 'confirmed'
         return res
     
-    def action_rfq_send(self):
-        result = super(PurchaseOrder, self).action_rfq_send()
-        if self.purchase_group_id:
-            # Set all RFQs in the same group to 'sent' state
-            for order in self.purchase_group_id.order_ids:
-                if order.state == 'draft':
-                    order.state = 'sent'
-        return result
+    # def action_rfq_send(self):
+    #     result = super(PurchaseOrder, self).action_rfq_send()
+    #     if self.purchase_group_id:
+    #         for order in self.purchase_group_id.order_ids:
+    #             if order.state == 'draft':
+    #                 order.state = 'sent'
+    #     return result
 
     def action_submit_rfq(self):
         if self.approval_stage == 'draft':
