@@ -67,7 +67,16 @@
                         <button name="action_reset_to_draft"
                             string="Reset to Draft"
                             type="object"
-                            invisible="approval_stage != 'canceled'" />
+                            invisible="approval_stage != 'canceled'" />                        
+
+                        <!-- <button class="oe_stat_button"
+                            type="object"
+                            name="action_compare_order_lines"
+                            icon="fa-columns"
+                            invisible="not order_ids"
+                            context="{'active_model':'purchase.order.group'}">
+                            <field name="order_ids" widget="statinfo" />
+                        </button> -->
 
                         <field name="has_supervisor_2" invisible="1" />
                         <field name="has_supervisor_3" invisible="1" />
@@ -86,7 +95,7 @@
                             invisible="not has_supervisor_2 or not has_supervisor_3" />
                     </header>
                     <sheet>
-                        <div class="oe_button_box" name="button_box">
+                        <!-- <div class="oe_button_box" name="button_box">
                             <button class="oe_stat_button"
                                 type="object"
                                 name="action_compare_order_lines"
@@ -97,7 +106,7 @@
                                     <span class="o_stat_text">Lines</span>
                                 </div>
                             </button>
-                        </div>
+                        </div> -->
 
                         <div class="oe_title">
                             <h1>
@@ -210,7 +219,7 @@
                                             model="purchase.order.line"
                                             class="btn-primary"
                                             icon="fa-check-circle"
-                                            groups="infs_purchasing.purchase_supervisor_level_1,infs_purchasing.purchase_supervisor_level_2,infs_purchasing.purchase_supervisor_level_3"
+                                        groups="infs_purchasing.purchase_supervisor_level_1,infs_purchasing.purchase_supervisor_level_2,infs_purchasing.purchase_supervisor_level_3"
                                             invisible="product_qty &lt;= 0.0" /> -->
                                     </tree>
                                 </field>
@@ -218,9 +227,9 @@
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">
-                        <field name="message_follower_ids"/>
-                        <field name="activity_ids"/>
-                        <field name="message_ids"/>
+                        <field name="message_follower_ids" />
+                        <field name="activity_ids" />
+                        <field name="message_ids" />
                     </div>
                 </form>
             </field>
