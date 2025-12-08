@@ -83,18 +83,36 @@ class PurchaseOrder(models.Model):
         return res
     
     def button_cancel(self):
-        res = super(PurchaseOrder, self).button_cancel()
-        if self.is_approved or not self.purchase_group_id:
-            self.approval_stage = 'canceled'
-            self._is_visible = True
-        else:            
-            raise UserError(_("Cannot set to cancel when not approved, please cancel the related RFQ Group first."))
-        return res
-    
+        for order in self:
+            if order.is_approved or not order.purchase_group_id:
+                order.write({
+                    'approval_stage': 'canceled',
+                    '_is_visible': True,
+                })
+            else:            
+                raise UserError(_("Cannot set to cancel when not approved, please cancel the related RFQ Group first."))
+                
+        return super(PurchaseOrder, self).button_cancel()
+
     def button_confirm(self):
-        res = super(PurchaseOrder, self).button_confirm()
-        self.approval_stage = 'confirmed'
-        return res
+        self.write({'approval_stage': 'confirmed'})
+
+        return super().button_confirm()
+
+    # def button_cancel(self):
+    #     res = super(PurchaseOrder, self).button_cancel()
+
+    #     if self.is_approved or not self.purchase_group_id:
+    #         self.approval_stage = 'canceled'
+    #         self._is_visible = True
+    #     else:            
+    #         raise UserError(_("Cannot set to cancel when not approved, please cancel the related RFQ Group first."))
+    #     return res
+
+    # def button_confirm(self):
+    #     res = super(PurchaseOrder, self).button_confirm()
+    #     self.approval_stage = 'confirmed'
+    #     return res
     
     # def action_rfq_send(self):
     #     result = super(PurchaseOrder, self).action_rfq_send()
