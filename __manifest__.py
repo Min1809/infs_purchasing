@@ -13,6 +13,7 @@
         # "data/sequence.xml",
         "security/group.xml",
         "security/ir.model.access.csv",
+        "views/views.xml",
         "views/purchaseorder.xml",
         "views/purchaseorderline.xml",
         "views/purchaseordergroup.xml",
