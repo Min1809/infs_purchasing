@@ -94,11 +94,11 @@ class PurchaseOrder(models.Model):
                 
         return super(PurchaseOrder, self).button_cancel()
 
-    # def button_confirm(self):
-    #     self.check_analytic_account()
-    #     res = super(PurchaseOrder, self).button_confirm()
-    #     self.approval_stage = 'confirmed'
-    #     return res
+    def button_confirm(self):
+        # self.check_analytic_account()
+        res = super(PurchaseOrder, self).button_confirm()
+        self.approval_stage = 'confirmed'
+        return res
     
     def check_analytic_account(self):
         if not self.env.user.has_group('analytic.group_analytic_accounting'):
@@ -118,7 +118,7 @@ class PurchaseOrder(models.Model):
 
     def action_submit_rfq(self):
         if self.approval_stage == 'draft':
-            self.check_analytic_account()
+            # self.check_analytic_account()
             if self.purchase_group_id:
                 self._is_visible = False
                 self.purchase_group_id.approval_stage = 'submitted'
@@ -138,7 +138,7 @@ class PurchaseOrder(models.Model):
 
         if not self.purchase_group_id or self.is_approved:
             if self.approval_stage=="draft":
-                self.check_analytic_account()
+                # self.check_analytic_account()
                 if group_one.users:                    
                     self.approval_stage = 'submitted'
                     # self.is_approved = False
