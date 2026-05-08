@@ -94,13 +94,15 @@ class PurchaseOrder(models.Model):
                 
         return super(PurchaseOrder, self).button_cancel()
 
-    def button_confirm(self):
-        self.check_analytic_account()
-        res = super(PurchaseOrder, self).button_confirm()
-        self.approval_stage = 'confirmed'
-        return res
+    # def button_confirm(self):
+    #     self.check_analytic_account()
+    #     res = super(PurchaseOrder, self).button_confirm()
+    #     self.approval_stage = 'confirmed'
+    #     return res
     
     def check_analytic_account(self):
+        if not self.env.user.has_group('analytic.group_analytic_accounting'):
+            return True
         for line in self.order_line:
             if line.product_id and not line.analytic_distribution:
                 raise UserError(_("Please set an analytic account for all purchase order lines."))
