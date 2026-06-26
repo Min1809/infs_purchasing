@@ -148,21 +148,36 @@ class PurchaseOrder(models.Model):
                     _logger.info("No users in Level 1 group, auto-approving to 'approved'.")
             elif self.approval_stage=="submitted":
                 if not group_two.users and not group_three.users:
-                    self.approval_stage = 'approved'
-                    self._send_approval_notification()
+                    if self.user_has_groups('infs_purchasing.purchase_supervisor_level_1'):
+                        self.approval_stage = 'approved'
+                        self._send_approval_notification()
+                    else:
+                        raise UserError(_('You do not have permission to approve this approval level.'))
                 else:
-                    self.approval_stage = 'approved_lvl_1'
-                    self._send_approval_notification()
+                    if self.user_has_groups('infs_purchasing.purchase_supervisor_level_1'):
+                        self.approval_stage = 'approved_lvl_1'
+                        self._send_approval_notification()
+                    else:
+                        raise UserError(_('You do not have permission to approve this approval level.'))
             elif self.approval_stage == "approved_lvl_1":
                 if not group_three.users:
+                    if self.user_has_groups('infs_purchasing.purchase_supervisor_level_2'):
+                        self.approval_stage = 'approved'
+                        self._send_approval_notification()
+                    else:
+                        raise UserError(_('You do not have permission to approve this approval level.'))
+                else:
+                    if self.user_has_groups('infs_purchasing.purchase_supervisor_level_2'):
+                        self.approval_stage = 'approved_lvl_2'
+                        self._send_approval_notification()
+                    else:
+                        raise UserError(_('You do not have permission to approve this approval level.'))
+            elif self.approval_stage == "approved_lvl_2":
+                if self.user_has_groups('infs_purchasing.purchase_supervisor_level_3'):
                     self.approval_stage = 'approved'
                     self._send_approval_notification()
                 else:
-                    self.approval_stage = 'approved_lvl_2'
-                    self._send_approval_notification()
-            elif self.approval_stage == "approved_lvl_2":
-                self.approval_stage = 'approved'
-                self._send_approval_notification()
+                    raise UserError(_('You do not have permission to approve this approval level.'))
         else:
             raise UserError(_('Cannot submit/approve RFQ if the RFQ Group is not approved. Please get the RFQ Group approved first.'))
             
